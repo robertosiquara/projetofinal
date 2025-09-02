@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Segurança Wayne</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="icone.png">
+</head>
+<body>
+    <header>
+        <div class="div-header">
+        <img src="Wayne.webp" alt="Wayne-logo" class="logo">
+        <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
+        </div>
+        <div id="nav-menu"></div>
+    </header>
+    <main>
+        <div class="container">
+            <h1 class="h2-login">Dashboard</h1>
+            <h3 class="h3-dash">Crimes por ganges</h2>
+            <canvas id="crimesChart" width="400" height="200"></canvas>
+            <h3 class="h3-dash">Crimes por bairros</h2>
+            <canvas id="neighborhoodsChart" width="400" height="200"></canvas>
+        </div>
+    </main>
+    <footer>
+        <p>Wayne Enterprises ©</p>
+    </footer>
+    <script src="js/script.js"></script>
+    <script>
+        renderMenu();
+        fetchStatsAndRenderCharts();
+    </script>
+</body>
+</html>

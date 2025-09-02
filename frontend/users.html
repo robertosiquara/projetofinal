@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Segurança Wayne</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="icone.png">
+</head>
+<body>
+    <header>
+        <div class="div-header">
+        <img src="Wayne.webp" alt="Wayne-logo" class="logo">
+        <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
+        </div>
+        <div id="nav-menu"></div>
+    </header>
+    <main>
+        <div class="container">
+            <h2 class="h2-login">Gerenciar Usuários</h2>
+            <form id="userForm">
+                <input type="text" id="name" class="login-input" placeholder="name" required>
+                <input type="text" id="username" class="login-input" placeholder="Login" required>
+                <input type="password" id="password" class="login-input" placeholder="Senha" required>
+                <select id="role" class="select-input">
+                    <option value="" disabled selected class="select-op">Nivel de Autorização</option>
+                    <option value="Gerente">Gerente</option>
+                    <option value="Funcionário">Funcionário</option>
+                    
+                </select>
+                <button type="submit" class="botao">Adicionar Usuário</button>
+            </form>
+        </div>
+        <div class="list-container">
+        <ul id="usersList"></ul>
+        </div>
+    </main>
+    <footer>
+        <p>Wayne Enterprises ©</p>
+    </footer>
+    <script src="js/script.js"></script>
+    <script>
+        renderMenu();
+        loadUsers();
+    </script>
+</body>
+</html>

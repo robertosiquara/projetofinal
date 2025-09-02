@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Segurança Wayne</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <link rel="icon" href="icone.png">
+<body>
+    <header>
+        <div class="div-header">
+            <img src="/frontend/Wayne.webp" alt="Wayne-logo" class="logo">
+            <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
+        </div>
+        <nav>
+            <div id="nav-menu"></div>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2 class="h2-login">Alertas de Crimes</h2>
+            <div id="alert-container" class="alert-container">
+                <h3>Alerta</h3>
+                <p><strong>Local:</strong> <span id="alert-location"></span></p>
+                <p><strong>Vilão:</strong> <span id="alert-villain"></span></p>
+                <p><strong>Tipo:</strong> <span id="alert-type"></span></p>
+            </div>
+            <audio id="siren" src="/frontend/sounds/siren.mp3" preload="auto"></audio>
+        </div>
+    </main>
+    <footer>
+        <p>Wayne Enterprises ©</p>
+    </footer>
+    <script src="/frontend/js/script.js"></script>
+    <script>
+        renderMenu();
+        loadAlerts();
+    </script>
+</body>
+</html>

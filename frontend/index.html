@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Segurança Wayne</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <link rel="icon" href="icone.png">
+</head>
+<body>
+    <header>
+        <div class="div-header">
+            <img src="/frontend/Wayne.webp" alt="Wayne-logo" class="logo">
+            <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
+        </div>
+    </header>
+    <main>
+        <div class="login-container">
+            <h2 class="h2-login">Login</h2>
+            <form id="loginForm">
+                <input type="text" id="username" class="login-input" placeholder="Username" required>
+                <input type="password" id="password" class="login-input" placeholder="Password" required>
+                <p id="login-error" style="color: red; display: none;"></p>
+                <button type="submit" class="logar">Login</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>Wayne Enterprises ©</p>
+    </footer>
+    <script src="/frontend/js/script.js" defer></script>
+</body>
+</html>
