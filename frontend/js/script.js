@@ -3,6 +3,9 @@ let token = localStorage.getItem('token');
 
 let crimesChartInstance = null;
 let neighborhoodsChartInstance = null;
+let resourceTypeChartInstance = null;
+let resourceStatusChartInstance = null;
+let registeredByChartInstance = null;
 
 // Função para decodificar JWT (extrai payload sem verificar assinatura)
 function decodeJWT(token) {
@@ -37,8 +40,8 @@ function renderMenu() {
     const navMenu = document.getElementById('nav-menu');
     if (!navMenu) return;
 
-    navMenu.innerHTML = ''; // Limpa o menu
-    if (!token) return; // Sem token, não mostra menu (página de login)
+    navMenu.innerHTML = ''; 
+    if (!token) return; 
 
     const payload = decodeJWT(token);
     const role = payload && payload.sub === 'batman' ? 'admin' : payload?.role;
@@ -89,6 +92,7 @@ function renderMenu() {
     navMenu.appendChild(ul);
 }
 
+// Função de logout
 function logout() {
     localStorage.removeItem('token'); // Remove o token
     token = null; // Limpa a variável token
@@ -140,6 +144,7 @@ function login(event) {
     });
 }
 
+// Função fetch com cabeçalho de autenticação
 function fetchWithAuth(url, options = {}) {
     if (!token) {
         alert('Por favor, faça login novamente.');
@@ -216,7 +221,10 @@ if (document.getElementById('userForm')) {
             }
             return response.json();
         })
-        .then(() => loadUsers())
+        .then(() => {
+            loadUsers();
+            document.getElementById('userForm').reset(); 
+        })
         .catch(async error => {
             console.error('Erro ao criar usuário:', error);
             const errorText = await error.text?.();
@@ -515,12 +523,57 @@ if (document.getElementById('requestForm')) {
             }
             return response.json();
         })
-        .then(() => loadRequests())
+        .then(() => {
+            document.getElementById('requestForm').reset();
+            loadRequests();
+        })
         .catch(error => {
             console.error('Erro ao criar solicitação:', error);
             alert('Erro ao criar solicitação');
         });
     });
+}
+
+function loadRequestConcluido() {
+    const list = document.getElementById('requestsListConcluido');
+    if (!list) return;
+
+    fetchWithAuth(`${API_URL}/requests/`)
+        .then(response => {
+            if (response.status === 403) {
+                alert('Acesso negado.');
+                window.location.href = '/frontend/index.html';
+                return Promise.reject('Acesso negado');
+            }
+            if (!response.ok) {
+                throw new Error('Erro ao carregar solicitações.');
+            }
+            return response.json();
+        })
+        .then(requests => {
+            list.innerHTML = '';
+
+            const concluidos = requests.filter(request => request.status === 'Concluído');
+
+            if (concluidos.length === 0) {
+                list.innerHTML = '<li>Nenhuma solicitação concluída encontrada.</li>';
+                return;
+            }
+
+            concluidos.forEach(request => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div class="resource-line"><strong>Equipamento solicitado:</strong> ${request.equipment_name}</div>
+                    <div class="resource-line"><strong>Status:</strong> ${request.status}</div>
+                    <div class="resource-line"><strong>Quantidade:</strong> ${request.quantity}</div>
+                `;
+                list.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar solicitações:', error);
+            list.innerHTML = '<li>Erro ao carregar solicitações.</li>';
+        });
 }
 
 // Funções para Alerts
@@ -590,8 +643,11 @@ function loadAlerts() {
 function fetchStatsAndRenderCharts() {
     const ctx1 = document.getElementById('crimesChart');
     const ctx2 = document.getElementById('neighborhoodsChart');
-    if (!ctx1 || !ctx2) return;
+    const ctx3 = document.getElementById('resourceTypeChart');
+    const ctx4 = document.getElementById('resourceStatusChart');
+    if (!ctx1 || !ctx2 || !ctx3 || !ctx4) return;
 
+    // Primeiro fetch: /dashboard/stats
     fetchWithAuth(`${API_URL}/dashboard/stats`)
     .then(response => {
         if (response.status === 403) {
@@ -605,18 +661,14 @@ function fetchStatsAndRenderCharts() {
         return response.json();
     })
     .then(stats => {
-        // Destroi os gráficos existentes (se houver)
-        if (crimesChartInstance) {
-            crimesChartInstance.destroy();
-        }
-        if (neighborhoodsChartInstance) {
-            neighborhoodsChartInstance.destroy();
-        }
+        // Destruir gráficos anteriores
+        if (crimesChartInstance) crimesChartInstance.destroy();
+        if (neighborhoodsChartInstance) neighborhoodsChartInstance.destroy();
 
         // Gráfico de crimes por vilão
         const villains = {};
         stats.forEach(stat => {
-            villains[stat.villain] = (villains[stat.villain] || 0) + stat.crimes;
+            villains[stat.villain] = (villains[stat.villain] || 0) + 1;
         });
         crimesChartInstance = new Chart(ctx1.getContext('2d'), {
             type: 'bar',
@@ -634,7 +686,7 @@ function fetchStatsAndRenderCharts() {
         // Gráfico de bairros perigosos
         const neighborhoods = {};
         stats.forEach(stat => {
-            neighborhoods[stat.neighborhood] = (neighborhoods[stat.neighborhood] || 0) + stat.crimes;
+            neighborhoods[stat.neighborhood] = (neighborhoods[stat.neighborhood] || 0) + 1;
         });
         neighborhoodsChartInstance = new Chart(ctx2.getContext('2d'), {
             type: 'pie',
@@ -642,7 +694,7 @@ function fetchStatsAndRenderCharts() {
                 labels: Object.keys(neighborhoods),
                 datasets: [{
                     data: Object.values(neighborhoods),
-                    backgroundColor: ['#7c6a03ff', '#7c7b7bff', '#000000', '#FFD700', '#333333', '#b99621ff']
+                    backgroundColor: ['#2d1d8bff','#090269fd','#FFD700','#be950cff','#917b03ff' ,'#a3a3a3ff','#363636ff', '#1a1a1aff','#000000',       '#808080ff']
                 }]
             }
         });
@@ -650,6 +702,61 @@ function fetchStatsAndRenderCharts() {
     .catch(error => {
         console.error('Erro ao carregar estatísticas:', error);
         alert('Erro ao carregar estatísticas');
+    });
+
+    // Segundo fetch: /dashboard/resources → para gráfico de tipos de recursos
+    fetchWithAuth(`${API_URL}/dashboard/resources`)
+    .then(response => {
+        if (!response.ok) throw new Error('Erro ao carregar recursos');
+        return response.json();
+    })
+    .then(resources => {
+        if (resourceTypeChartInstance) resourceTypeChartInstance.destroy();
+        if (resourceStatusChartInstance) resourceStatusChartInstance.destroy();
+
+        const resourceType = {};
+        resources.forEach(resource => {
+            if (resource.type) {
+                resourceType[resource.type] = (resourceType[resource.type] || 0) + 1;
+            } else {
+                console.warn('resource.type indefinido:', resource);
+            }
+        });
+
+        resourceTypeChartInstance = new Chart(ctx3.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(resourceType),
+                datasets: [{
+                    data: Object.values(resourceType),
+                    backgroundColor: ['#FFD700', '#7c7b7bff', '#000000', '#1100ffff']
+                }]
+            }
+        });
+
+        const resourceStatus ={};
+        resources.forEach(resource => {
+            if (resource.status) {
+                resourceStatus[resource.status] = (resourceStatus[resource.status] || 0) + 1;
+            } else {
+                console.warn('resource.status indefinido:', resource);
+            }
+        });
+
+        resourceStatusChartInstance = new Chart(ctx4.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(resourceStatus),
+                datasets: [{
+                    data: Object.values(resourceStatus),
+                    backgroundColor: ['#7c6a03ff', '#7c7b7bff', '#000000', '#FFD700']
+                }]
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Erro ao carregar tipos de recursos:', error);
+        alert('Erro ao carregar tipos de recursos');
     });
 }
 
@@ -682,3 +789,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAlerts();
     }
 });
+
+
+

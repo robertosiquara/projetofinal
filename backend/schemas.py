@@ -72,7 +72,7 @@ class Request(RequestBase):
 #Validação Crime
 class CrimeStatBase(BaseModel):
     villain: str
-    crimes: int
+    crimes: str
     neighborhood: str
     date: date
 

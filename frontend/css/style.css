@@ -343,12 +343,12 @@ main {
     transform: scale(1.2);
 }
 
-ul#usersList, ul#resourcesList, ul#requestsList, ul#alertsList {
+ul#usersList, ul#resourcesList, ul#alertsList {
     list-style: none;
     padding: 0;
 }
 
-ul#usersList li, ul#resourcesList li, ul#requestsList li, ul#alertsList li {
+ul#usersList li, ul#resourcesList li, ul#alertsList li {
     background-color: var(--bg-900);
     margin: 5px 0;
     padding: 10px;
@@ -488,12 +488,12 @@ footer {
 }
 
 /* Estilo para os cards da lista de solicitações */
-ul#requestsList {
+ul#requestsList, ul#requestsListConcluido {
     padding: 0;
     list-style: none;
 }
 
-ul#requestsList li {
+ul#requestsList li, ul#requestsListConcluido li {
     background-color: var(--bg-700);
     padding: 20px 25px;
     border-left: 6px solid var(--accent-500);
@@ -510,7 +510,7 @@ ul#requestsList li {
         transform 0.3s ease;
 }
 
-ul#requestsList li:hover {
+ul#requestsList li:hover, ul#requestsListConcluido li:hover {
     background-color: var(--bg-800);
     border-left-color: var(--accent-600);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);

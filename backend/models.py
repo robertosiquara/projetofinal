@@ -87,7 +87,7 @@ class CrimeStat(Base):
     __tablename__ = "crime_stats"
     id = Column(Integer, primary_key=True, index=True)
     villain = Column(String(100), nullable=False)
-    crimes = Column(Integer, nullable=False)
+    crimes = Column(String(100), nullable=False)
     neighborhood = Column(String(100))
     date = Column(DateTime, default=datetime.utcnow, nullable=False)
 
