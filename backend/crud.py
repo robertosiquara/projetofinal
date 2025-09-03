@@ -41,9 +41,9 @@ def create_access_token (data: dict, expires_delta: timedelta = None):
     to_encode.update({'exp': expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def create_resource(db: Session, resource: schemas.ResourceBase):
+def create_resource(db: Session, resource: schemas.ResourceBase, user_id: int):
     print("Dados recebidos no backend:", resource.dict())
-    db_resource = Resource(**resource.dict())
+    db_resource = Resource(**resource.dict(), registered_by=user_id)
     db.add(db_resource)
     db.commit()
     db.refresh(db_resource)

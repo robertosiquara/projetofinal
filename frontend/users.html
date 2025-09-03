@@ -6,6 +6,7 @@
     <title>Central de Segurança Wayne</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="icone.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
@@ -18,10 +19,10 @@
     <main>
         <div class="container">
             <h2 class="h2-login">Gerenciar Usuários</h2>
-            <form id="userForm">
+            <form id="userForm" autocomplete="off">
                 <input type="text" id="name" class="login-input" placeholder="name" required>
-                <input type="text" id="username" class="login-input" placeholder="Login" required>
-                <input type="password" id="password" class="login-input" placeholder="Senha" required>
+                <input type="text" id="username" class="login-input" placeholder="Login" required autocomplete="off">
+                <input type="password" id="password" class="login-input" placeholder="Senha" required autocomplete="new-password">
                 <select id="role" class="select-input">
                     <option value="" disabled selected class="select-op">Nivel de Autorização</option>
                     <option value="Gerente">Gerente</option>
@@ -32,6 +33,7 @@
             </form>
         </div>
         <div class="list-container">
+        <h3 class="h3-dash">Usuários Cadastrados</h3>
         <ul id="usersList"></ul>
         </div>
     </main>

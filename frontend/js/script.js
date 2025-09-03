@@ -18,6 +18,20 @@ function decodeJWT(token) {
     }
 }
 
+// Função para renderizar mensagem de boas-vindas
+function renderWelcomeMessage() {
+    if (!token) {
+        window.location.href = '/frontend/index.html';
+        return;
+    }
+    const payload = decodeJWT(token);
+    const userName = payload?.name || payload?.sub || 'Usuário';
+    const welcomeElement = document.querySelector('.welcome');
+    if (welcomeElement) {
+        welcomeElement.textContent = `Bem-vindo, ${userName}!`;
+    }
+}
+
 // Função para renderizar menu com base no role do usuário
 function renderMenu() {
     const navMenu = document.getElementById('nav-menu');
@@ -32,6 +46,7 @@ function renderMenu() {
 
     const menuItems = {
         admin: [
+            { text: 'Inicio', href: '/frontend/welcome.html' },
             { text: 'Dashboard', href: '/frontend/dashboard.html' },
             { text: 'Alertas', href: '/frontend/alerts.html' },
             { text: 'Cadastro de Usuário', href: '/frontend/users.html' },
@@ -39,14 +54,15 @@ function renderMenu() {
             { text: 'Solicitação de Recursos', href: '/frontend/request_resource.html' },
             { text: 'Recursos Solicitados', href: '/frontend/requests.html' }
         ],
-        gerente: [
+        Gerente: [
+            { text: 'Inicio', href: '/frontend/welcome.html' },
             { text: 'Dashboard', href: '/frontend/dashboard.html' },
             { text: 'Cadastro de Usuário', href: '/frontend/users.html' },
             { text: 'Solicitação de Recursos', href: '/frontend/request_resource.html' },
             { text: 'Recursos Solicitados', href: '/frontend/requests.html' }
         ],
-        funcionário: [
-            { text: 'Dashboard', href: '/frontend/dashboard.html' },
+        Funcionário: [
+            { text: 'Inicio', href: '/frontend/welcome.html' },
             { text: 'Recursos Solicitados', href: '/frontend/requests.html' }
         ]
     };
@@ -103,7 +119,7 @@ function login(event) {
             localStorage.setItem('token', data.access_token);
             token = data.access_token;
             renderMenu();
-            window.location.href = '/frontend/dashboard.html';
+            window.location.href = '/frontend/welcome.html';
         } else {
             if (errorElement) {
                 errorElement.textContent = 'Usuário ou senha inválidos';
@@ -154,7 +170,12 @@ function loadUsers() {
         list.innerHTML = '';
         users.forEach(user => {
             const li = document.createElement('li');
-            li.textContent = `${user.username} - ${user.role}`;
+            li.innerHTML = `
+                <div>
+                    <div><i class="fas fa-user" style="color: #f6fa05ff;"></i><strong>   Usuário:</strong> ${user.username}</div>
+                    <div><i class="fas fa-shield" style="color: #2c04e0ff;"></i> <strong>   Função:</strong> ${user.role}</div>
+                </div>
+            `;
             list.appendChild(li);
         });
     })
@@ -472,6 +493,36 @@ function loadRequests() {
     });
 }
 
+if (document.getElementById('requestForm')) {
+    document.getElementById('requestForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const request = {
+            equipment_name: document.getElementById('equipment_name').value
+        };
+        fetchWithAuth(`${API_URL}/request_resources/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request)
+        })
+        .then(response => {
+            if (response.status === 403) {
+                alert('Acesso negado. Apenas gerentes ou administradores podem criar solicitações.');
+                window.location.href = '/frontend/index.html';
+                return Promise.reject('Acesso negado');
+            }
+            if (!response.ok) {
+                throw new Error('Erro ao criar solicitação');
+            }
+            return response.json();
+        })
+        .then(() => loadRequests())
+        .catch(error => {
+            console.error('Erro ao criar solicitação:', error);
+            alert('Erro ao criar solicitação');
+        });
+    });
+}
+
 // Funções para Alerts
 function loadAlerts() {
     const alertContainer = document.getElementById('alert-container');
@@ -606,6 +657,9 @@ function fetchStatsAndRenderCharts() {
 // Inicialização dinâmica
 document.addEventListener('DOMContentLoaded', () => {
     renderMenu();
+    if (window.location.pathname.includes('welcome.html')) {
+        renderWelcomeMessage();
+    }
     if (document.getElementById('loginForm')) {
         document.getElementById('loginForm').addEventListener('submit', login);
     }

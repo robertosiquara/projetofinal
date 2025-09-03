@@ -10,7 +10,7 @@ def login_for_acess_token( form_data: OAuth2PasswordRequestForm = Depends(), db:
     user = crud.authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail='Login ou senha incorreto.')
-    access_token = crud.create_access_token(data={'sub': user.username, 'role': user.role})
+    access_token = crud.create_access_token(data={'sub': user.username,"name": user.name, 'role': user.role})
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 @router.post('/', response_model= schemas.User)

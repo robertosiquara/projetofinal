@@ -4,9 +4,9 @@ from backend import crud, schemas, database, auth
 
 router = APIRouter()
 
-@router.post('/', response_model= schemas.Resource)
+@router.post('/', response_model=schemas.Resource)
 def create_resource(resource: schemas.ResourceBase, db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_admin)):
-    return crud.create_resource(db, resource)
+    return crud.create_resource(db, resource, current_user.id)
 
 @router.get('/', response_model= list[schemas.Resource])
 def read_sesources(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_admin)):

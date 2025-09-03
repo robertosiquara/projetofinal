@@ -26,6 +26,11 @@ class User(Base):
     username = Column(String(50), unique=True, nullable=False)
     hashed_password = Column(String(100), nullable=False)
     role = Column(Enum(RoleEnum), nullable=False)
+    registered = relationship(
+       "Resource", 
+       back_populates="register",
+       foreign_keys="Resource.registered_by"
+    )
     requests = relationship(
         "Request",
         back_populates="user",
@@ -44,6 +49,12 @@ class Resource(Base):
     type = Column(Enum(TypeEnum), nullable=False)
     quantity= Column(Integer, nullable=False)
     status = Column(String(20), nullable=True)
+    registered_by = Column(Integer, ForeignKey("users.id"), nullable=False)
+    register = relationship(
+        "User",
+        back_populates="registered",
+        foreign_keys=[registered_by]
+    )
 
     @validates('quantity')
     def update_status_based_on_quantity(self, key, value):
