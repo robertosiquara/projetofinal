@@ -16,28 +16,48 @@
         </div>
         <div id="nav-menu"></div>
     </header>
-    <main>
-        <div class="container">
-            <h1 class="h2-login">Crimes</h1>
-            <h3 class="h3-dash">Crimes por ganges</h2>
+    <main class="dashboard">
+    <div class="dashboard-container">
+        <div class="dash-title"><h2 class="h2-login">Crimes</h2></div>
+        
+        <div class="chart-box">
+            <h3 class="h3-dash">Crimes por ganges</h3>
             <canvas id="crimesChart" width="400" height="200"></canvas>
-            <h3 class="h3-dash">Crimes por bairros</h2>
+        </div>
+        <div class="chart-box">
+            <h3 class="h3-dash">Crimes por bairros</h3>
             <canvas id="neighborhoodsChart" width="400" height="200"></canvas>
         </div>
-        <div class="container">
-            <h1 class="h2-login">Recursos</h1>
-            <h3 class="h3-dash">Tipos de Recursos</h2>
+        
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dash-title"><h2 class="h2-login">Recursos</h2></div>
+        
+        <div class="chart-box">
+            <h3 class="h3-dash">Tipos de Recursos</h3>
             <canvas id="resourceTypeChart" width="400" height="200"></canvas>
-            <h3 class="h3-dash">Disponibilidade</h2>
+        </div>
+        <div class="chart-box">
+            <h3 class="h3-dash">Disponibilidade</h3>
             <canvas id="resourceStatusChart" width="400" height="200"></canvas>
         </div>
-        <div class="container">
-            <h1 class="h2-login">Atividades dos Usuários</h1>
-            <h3 class="h3-dash">Recursos Registrados por pessoa</h2>
+        
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dash-title"><h2 class="h2-login">Atividades dos Usuários</h2></div>
+        
+        <div class="chart-box">
+            <h3 class="h3-dash">Recursos Registrados por pessoa</h3>
             <canvas id="registeredByChart" width="400" height="200"></canvas>
-            <h3 class="h3-dash">Solicitaçãoes de Recursos por pessoa</h2>
+        </div>
+        <div class="chart-box">
+            <h3 class="h3-dash">Solicitaçãoes de Recursos por pessoa</h3>
             <canvas id="requestedByChart" width="400" height="200"></canvas>
         </div>
+        
+    </div>
     </main>
     <footer>
         <p>Wayne Enterprises ©</p>
