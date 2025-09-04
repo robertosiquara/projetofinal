@@ -27,8 +27,22 @@ class ResourceBase(BaseModel):
     type: TypeEnum
     quantity: int
     status: Optional[str] = None
+
     class Config:
         use_enum_values = True
+        
+
+class ResourceOut(BaseModel):
+    id: int
+    name: str
+    type: str
+    quantity: int
+    status: str
+    registered_by: int
+    registered_by_name: str  
+
+    class Config:
+        orm_mode = True
 
 class ResourceCreate(ResourceBase):
     pass
@@ -68,6 +82,20 @@ class Request(RequestBase):
 
     class Config:
         from_attributes = True
+
+class RequestOut(RequestBase):
+    id: int
+    equipment_name: str
+    quantity: Optional[int] = None
+    status: str
+    requested_by: int
+    requested_by_name: str  
+    status_changed_by: Optional[int] = None
+    status_changed_by_name: Optional[str] = None  
+
+    class Config:
+        orm_mode = True
+
 
 #Validação Crime
 class CrimeStatBase(BaseModel):

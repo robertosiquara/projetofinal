@@ -49,6 +49,29 @@ def create_resource(db: Session, resource: schemas.ResourceBase, user_id: int):
     db.refresh(db_resource)
     return db_resource
 
+def list_resources(db: Session):
+    # Faz o join e pega o nome do user
+    resources = db.query(
+        Resource,
+        User.name.label("registered_by_name")
+    ).join(User, Resource.registered_by == User.id).all()
+
+    # Transforma em lista de dicts para o Pydantic entender
+    result = []
+    for resource, registered_by_name in resources:
+        res_dict = {
+            "id": resource.id,
+            "name": resource.name,
+            "type": resource.type,
+            "quantity": resource.quantity,
+            "status": resource.status,
+            "registered_by": resource.registered_by,
+            "registered_by_name": registered_by_name  # <- nome do user
+        }
+        result.append(res_dict)
+
+    return result
+
 def get_resources(db: Session):
     return db.query(Resource).all()
 
@@ -77,6 +100,29 @@ def create_request(db: Session, request: schemas.RequestCreate, user_id: int):
 
 def get_requests(db: Session):
     return db.query(Request).all()
+
+def list_requests(db: Session):
+    requests = db.query(
+        Request,
+        User.name.label("requested_by_name"),
+        User.id.label("requested_by_id"),
+        User.name.label("status_changed_by_name")
+    ).join(User, Request.requested_by == User.id).outerjoin(User, Request.status_changed_by == User.id).all()
+    result = []
+    for request, requested_by_name, requested_by_id, status_changed_by_name in requests:
+        req_dict = {
+            "id": request.id,
+            "equipment_name": request.equipment_name,
+            "quantity": request.quantity,
+            "status": request.status,
+            "requested_by": request.requested_by,
+            "requested_by_name": requested_by_name,
+            "requested_by_id": requested_by_id,
+            "status_changed_by": request.status_changed_by,
+            "status_changed_by_name": status_changed_by_name
+        }
+        result.append(req_dict)
+    return result
 
 def update_request(db: Session, request_id: int, status: str | None = None, quantity: int | None = None, status_changed_by: int | None = None):
     db_request = db.query(Request).filter(Request.id == request_id).first()

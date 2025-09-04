@@ -645,7 +645,8 @@ function fetchStatsAndRenderCharts() {
     const ctx2 = document.getElementById('neighborhoodsChart');
     const ctx3 = document.getElementById('resourceTypeChart');
     const ctx4 = document.getElementById('resourceStatusChart');
-    if (!ctx1 || !ctx2 || !ctx3 || !ctx4) return;
+    const ctx5 = document.getElementById('registeredByChart');
+    if (!ctx1 || !ctx2 || !ctx3 || !ctx4 || !ctx5) return;
 
     // Primeiro fetch: /dashboard/stats
     fetchWithAuth(`${API_URL}/dashboard/stats`)
@@ -675,7 +676,7 @@ function fetchStatsAndRenderCharts() {
             data: {
                 labels: Object.keys(villains),
                 datasets: [{
-                    label: 'Crimes por Vilão',
+                    label: 'Lider da Gangue',
                     data: Object.values(villains),
                     backgroundColor: '#FFD700'
                 }]
@@ -689,14 +690,16 @@ function fetchStatsAndRenderCharts() {
             neighborhoods[stat.neighborhood] = (neighborhoods[stat.neighborhood] || 0) + 1;
         });
         neighborhoodsChartInstance = new Chart(ctx2.getContext('2d'), {
-            type: 'pie',
+            type: 'bar',
             data: {
                 labels: Object.keys(neighborhoods),
                 datasets: [{
+                    label: 'Bairros',
                     data: Object.values(neighborhoods),
-                    backgroundColor: ['#2d1d8bff','#090269fd','#FFD700','#be950cff','#917b03ff' ,'#a3a3a3ff','#363636ff', '#1a1a1aff','#000000',       '#808080ff']
+                    backgroundColor: ['#2d1d8bff','#090269fd','#FFD700','#be950cff','#917b03ff' ,'#a3a3a3ff','#363636ff', '#1a1a1aff','#000000']
                 }]
-            }
+            },
+            options: { scales: { y: { beginAtZero: true } } }
         });
     })
     .catch(error => {
@@ -713,6 +716,7 @@ function fetchStatsAndRenderCharts() {
     .then(resources => {
         if (resourceTypeChartInstance) resourceTypeChartInstance.destroy();
         if (resourceStatusChartInstance) resourceStatusChartInstance.destroy();
+        if (registeredByChartInstance) registeredByChartInstance.destroy();
 
         const resourceType = {};
         resources.forEach(resource => {
@@ -750,6 +754,26 @@ function fetchStatsAndRenderCharts() {
                 datasets: [{
                     data: Object.values(resourceStatus),
                     backgroundColor: ['#7c6a03ff', '#7c7b7bff', '#000000', '#FFD700']
+                }]
+            }
+        });
+
+        const resourceRegistered = {};
+        resources.forEach(resource => {
+            if (resource.registered_by_name) {
+                resourceRegistered[resource.registered_by_name] = (resourceRegistered[resource.registered_by_name] || 0) + 1;
+            } else {
+                console.warn('resource.registered_by indefinido:', resource);
+            }
+        });
+
+        registeredByChartInstance = new Chart(ctx5.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(resourceRegistered),
+                datasets: [{
+                    data: Object.values(resourceRegistered),
+                    backgroundColor: ['#FFD700', '#7c7b7bff', '#000000', '#1100ffff']
                 }]
             }
         });

@@ -132,9 +132,7 @@ main {
 .bemvindo {
     background: url('/frontend/Wayne.webp') center no-repeat;
     background-size: 40%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
     gap: 30px;
     padding: 20px;
     flex: 1;
@@ -291,6 +289,7 @@ main {
     border-radius: 8px;
     color: var(--text-300);
     cursor: pointer;
+    margin-bottom: 20px;
     transition: all 0.3s ease;
 }
 

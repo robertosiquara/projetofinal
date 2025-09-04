@@ -8,10 +8,10 @@ router = APIRouter()
 def get_stats(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_manager_or_admin)):
     return crud.get_crime_stats(db)
 
-@router.get('/resources', response_model= list[schemas.Resource])
+@router.get('/resources', response_model= list[schemas.ResourceOut])
 def read_sesources(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_admin)):
-    return crud.get_resources(db)
+    return crud.list_resources(db)
 
-@router.get('/requests', response_model=list[schemas.Request])
+@router.get('/requests', response_model=list[schemas.RequestOut])
 def read_requests(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_employee_or_higher)):
-    return crud.get_requests(db)
+    return crud.list_requests(db)
