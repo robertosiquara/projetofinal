@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from backend.models import User, Resource, Request, Alert, CrimeStat
 from passlib.context import CryptContext 
 from datetime import datetime, timedelta
@@ -102,12 +102,20 @@ def get_requests(db: Session):
     return db.query(Request).all()
 
 def list_requests(db: Session):
+    RequestedByUser = aliased(User)
+    StatusChangedByUser = aliased(User)
+
     requests = db.query(
         Request,
-        User.name.label("requested_by_name"),
-        User.id.label("requested_by_id"),
-        User.name.label("status_changed_by_name")
-    ).join(User, Request.requested_by == User.id).outerjoin(User, Request.status_changed_by == User.id).all()
+        RequestedByUser.name.label("requested_by_name"),
+        RequestedByUser.id.label("requested_by_id"),
+        StatusChangedByUser.name.label("status_changed_by_name")
+    ).join(
+        RequestedByUser, Request.requested_by == RequestedByUser.id
+    ).outerjoin(
+        StatusChangedByUser, Request.status_changed_by == StatusChangedByUser.id
+    ).all()
+
     result = []
     for request, requested_by_name, requested_by_id, status_changed_by_name in requests:
         req_dict = {
@@ -122,6 +130,7 @@ def list_requests(db: Session):
             "status_changed_by_name": status_changed_by_name
         }
         result.append(req_dict)
+
     return result
 
 def update_request(db: Session, request_id: int, status: str | None = None, quantity: int | None = None, status_changed_by: int | None = None):

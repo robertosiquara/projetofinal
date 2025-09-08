@@ -6,6 +6,7 @@ let neighborhoodsChartInstance = null;
 let resourceTypeChartInstance = null;
 let resourceStatusChartInstance = null;
 let registeredByChartInstance = null;
+let requestedByChartInstance = null
 
 // Função para decodificar JWT (extrai payload sem verificar assinatura)
 function decodeJWT(token) {
@@ -59,8 +60,8 @@ function renderMenu() {
         ],
         Gerente: [
             { text: 'Inicio', href: '/frontend/welcome.html' },
-            { text: 'Dashboard', href: '/frontend/dashboard.html' },
             { text: 'Cadastro de Usuário', href: '/frontend/users.html' },
+            { text: 'Gerenciamento de Recursos', href: '/frontend/resources.html' },
             { text: 'Solicitação de Recursos', href: '/frontend/request_resource.html' },
             { text: 'Recursos Solicitados', href: '/frontend/requests.html' }
         ],
@@ -646,7 +647,8 @@ function fetchStatsAndRenderCharts() {
     const ctx3 = document.getElementById('resourceTypeChart');
     const ctx4 = document.getElementById('resourceStatusChart');
     const ctx5 = document.getElementById('registeredByChart');
-    if (!ctx1 || !ctx2 || !ctx3 || !ctx4 || !ctx5) return;
+    const ctx6 = document.getElementById('requestedByChart')
+    if (!ctx1 || !ctx2 || !ctx3 || !ctx4 || !ctx5 || !ctx6) return;
 
     // Primeiro fetch: /dashboard/stats
     fetchWithAuth(`${API_URL}/dashboard/stats`)
@@ -781,6 +783,39 @@ function fetchStatsAndRenderCharts() {
     .catch(error => {
         console.error('Erro ao carregar tipos de recursos:', error);
         alert('Erro ao carregar tipos de recursos');
+    });
+
+    fetchWithAuth(`${API_URL}/dashboard/requests`)
+    .then(response=>{
+        if (!response.ok) throw new Error('Erro ao carregar Requisições');
+            return response.json();
+    })
+
+    .then(requests => {
+        if(requestedByChartInstance) requestedByChartInstance.destroy();
+
+        const requestChanged = {};
+        requests.forEach(request =>{
+            if(request.status_changed_by_name){
+                requestChanged[request.status_changed_by_name]=(requestChanged[request.status_changed_by_name] || 0) + 1;
+            }
+        });
+        requestedByChartInstance = new Chart(ctx6.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(requestChanged),
+                datasets: [{
+                    label: 'Usuarios',
+                    data: Object.values(requestChanged),
+                    backgroundColor: ['#FFD700', '#7c7b7bff', '#000000', '#1100ffff']
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+    })
+    .catch(error => {
+        console.error('Erro ao carregar grafico de requisições:', error);
+        alert('Erro ao carregar grafico de requisições');
     });
 }
 

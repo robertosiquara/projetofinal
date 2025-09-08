@@ -40,10 +40,9 @@ class ResourceOut(BaseModel):
     status: str
     registered_by: int
     registered_by_name: str  
-
-    class Config:
-        orm_mode = True
-
+    model_config = {
+        "from_attributes": True
+    }
 class ResourceCreate(ResourceBase):
     pass
 
@@ -79,9 +78,9 @@ class Request(RequestBase):
     requested_by: int
     status_changed_by: Optional[int] = None
     quantity: Optional[int] = None
-
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class RequestOut(RequestBase):
     id: int
@@ -92,9 +91,9 @@ class RequestOut(RequestBase):
     requested_by_name: str  
     status_changed_by: Optional[int] = None
     status_changed_by_name: Optional[str] = None  
-
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 
 #Validação Crime
