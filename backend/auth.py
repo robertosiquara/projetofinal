@@ -6,6 +6,7 @@ from backend import crud, schemas, database
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='users/token')
 
+#funções oara definir o nivel de autorização
 def get_current_user(db: Session = Depends(database.get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code= status.HTTP_401_UNAUTHORIZED,

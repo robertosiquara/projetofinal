@@ -41,6 +41,7 @@ def create_access_token (data: dict, expires_delta: timedelta = None):
     to_encode.update({'exp': expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+#função para criar um novo recurso
 def create_resource(db: Session, resource: schemas.ResourceBase, user_id: int):
     print("Dados recebidos no backend:", resource.dict())
     db_resource = Resource(**resource.dict(), registered_by=user_id)
@@ -49,6 +50,7 @@ def create_resource(db: Session, resource: schemas.ResourceBase, user_id: int):
     db.refresh(db_resource)
     return db_resource
 
+#função para listar recursos trazendo o nome do usuario que cadastrou
 def list_resources(db: Session):
     # Faz o join e pega o nome do user
     resources = db.query(
@@ -56,7 +58,6 @@ def list_resources(db: Session):
         User.name.label("registered_by_name")
     ).join(User, Resource.registered_by == User.id).all()
 
-    # Transforma em lista de dicts para o Pydantic entender
     result = []
     for resource, registered_by_name in resources:
         res_dict = {
@@ -66,15 +67,17 @@ def list_resources(db: Session):
             "quantity": resource.quantity,
             "status": resource.status,
             "registered_by": resource.registered_by,
-            "registered_by_name": registered_by_name  # <- nome do user
+            "registered_by_name": registered_by_name  
         }
         result.append(res_dict)
 
     return result
 
+#função para listar recursos
 def get_resources(db: Session):
     return db.query(Resource).all()
 
+#função para editar recurso selecionado
 def update_resource(db: Session, resource_id: int, resource: schemas.ResourceUpdate):
     db_resource = db.query(Resource).filter(Resource.id == resource_id).first()
     if db_resource:
@@ -84,6 +87,7 @@ def update_resource(db: Session, resource_id: int, resource: schemas.ResourceUpd
         db.refresh(db_resource)
     return db_resource 
 
+#função para deletar recurso selecionado
 def delete_resource(db: Session, resource_id: int):
     db_resource =  db.query(Resource).filter(Resource.id == resource_id).first()
     if db_resource:
@@ -91,6 +95,7 @@ def delete_resource(db: Session, resource_id: int):
         db.commit()
     return db_resource
 
+#função para criar solicitação 
 def create_request(db: Session, request: schemas.RequestCreate, user_id: int):
     db_request = Request(**request.dict(), requested_by= user_id)
     db.add(db_request)
@@ -98,9 +103,11 @@ def create_request(db: Session, request: schemas.RequestCreate, user_id: int):
     db.refresh(db_request)
     return(db_request)
 
+#função para listar solicitações 
 def get_requests(db: Session):
     return db.query(Request).all()
 
+#função para listar solicitações trazendo o nome de quem criou e de quem mudou o status
 def list_requests(db: Session):
     RequestedByUser = aliased(User)
     StatusChangedByUser = aliased(User)
@@ -133,6 +140,7 @@ def list_requests(db: Session):
 
     return result
 
+#função para editar solicitação selecionada
 def update_request(db: Session, request_id: int, status: str | None = None, quantity: int | None = None, status_changed_by: int | None = None):
     db_request = db.query(Request).filter(Request.id == request_id).first()
     if not db_request:
@@ -149,10 +157,11 @@ def update_request(db: Session, request_id: int, status: str | None = None, quan
     db.refresh(db_request)
     return db_request
 
+#função para listar crimes 
 def get_crime_stats(db: Session):
     return db.query(CrimeStat).all()
 
-# Alerts fictícios
+#função para listar Alertas fictícios
 def get_alerts(db: Session):
     return db.query(Alert).all()
 

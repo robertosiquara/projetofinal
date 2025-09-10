@@ -58,7 +58,6 @@ class Resource(Base):
 
     @validates('quantity')
     def update_status_based_on_quantity(self, key, value):
-        # Atualiza o status com base na nova quantidade
         if value > 0:
             self.status = "Disponível"
         else:
@@ -94,6 +93,6 @@ class CrimeStat(Base):
 class Alert(Base):
     __tablename__ = "alerts"
     id = Column(Integer, primary_key=True, index=True)
-    location = Column(String(255))  # Specify length
-    villain = Column(String(255))   # Specify length
+    location = Column(String(255))  
+    villain = Column(String(255))   
     type = Column(String(255))

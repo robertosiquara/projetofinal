@@ -4,6 +4,7 @@ from backend import auth, crud, database, schemas
 
 router = APIRouter()
 
+#rotas referente às solicitações incluídas 
 @router.get('/', response_model=list[schemas.Request])
 def read_requests(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(auth.get_current_employee_or_higher)):
     return crud.get_requests(db)

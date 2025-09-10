@@ -1,4 +1,4 @@
 from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-print(pwd_context.hash("darkknight"))  # Para batman
-print(pwd_context.hash("wayne"))
+print(pwd_context.hash("darkknight"))  # Senha para batman
+print(pwd_context.hash("wayne")) # Senha dos demais

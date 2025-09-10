@@ -19,12 +19,13 @@ app = FastAPI(
     description="API para gerenciamento de segurança nas Indústrias Wayne"
 )
 
+# uso do mecanismo de segurança de navegador CORS para permitir o frontend acessar o fastapi em outro dominio.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000", "http://localhost:8000"],  # Permitir ambas as origens
+    allow_origins=["http://127.0.0.1:8000", "http://localhost:8000"],  
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos os métodos HTTP (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todos os cabeçalhos
+    allow_methods=["*"], 
+    allow_headers=["*"],  
 )
 
 

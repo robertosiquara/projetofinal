@@ -5,6 +5,7 @@ from backend import crud, models, schemas, database, auth
 
 router = APIRouter()
 
+#rotas referente aos usuários
 @router.post('/token')
 def login_for_acess_token( form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     user = crud.authenticate_user(db, form_data.username, form_data.password)
