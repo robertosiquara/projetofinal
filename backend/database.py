@@ -1,21 +1,25 @@
-
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from  sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-#URL de conexão
+
+#crio o caminho da conexao
 database_url = 'mysql+pymysql://root:@localhost/Wayne_security1'
 
-#prepara a conexão
+#sistema para conexão
 engine = create_engine(database_url)
 
-#cria fabrica de sessão para interagir com o banco de dados
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+#cria as sessões para interagir com o banco de dados
+#Session é uma classe do SQLAlchemy que representa uma conexão ativa com o banco de dados.(SELECT, INSERT, UPDATE...)
+#Não confirma alterações automaticamente (autocommit=False)
+#Não sincroniza dados automaticamente antes de cada consulta (autoflush=False)
+#Está conectada ao banco definido pelo engine (bind=engine).
+SessionLocal = sessionmaker(autocommit= False, autoflush= False, bind= engine)
 
-#Usada para criar as tabelas através das classes
-Base = declarative_base()
+#Usado para criar as tabelas através das classes
+class Base (DeclarativeBase):
+     pass
 
-#Função para criar uma nova sessão
+#função para conectar com o banco de dados e depois fechar qdo termiar
 def get_db():
     db = SessionLocal()
     try:

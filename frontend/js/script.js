@@ -418,6 +418,15 @@ function loadRequests() {
     })
     .then(requests => {
         list.innerHTML = '';
+
+        // --- ORGANIZAÇÃO POR STATUS ---
+        // Coloca 'Pendente' no topo e 'Concluído' abaixo
+        requests.sort((a, b) => {
+            if (a.status === 'Pendente' && b.status !== 'Pendente') return -1;
+            if (a.status !== 'Pendente' && b.status === 'Pendente') return 1;
+            return 0;
+        });
+        
         requests.forEach(req => {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -848,6 +857,5 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAlerts();
     }
 });
-
 
 
