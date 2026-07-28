@@ -1,26 +1,26 @@
 -- Criar banco de dados
-CREATE DATABASE IF NOT EXISTS Wayne_security1;
+CREATE DATABASE IF NOT EXISTS wayne_security3;
 
 -- Iniciar banco de dados
-USE Wayne_security1;
+USE wayne_security3;
 
 
 -- Apos criação automática das tabelas ao iniciar o programa, fazer as inclusões:
 
 -- Inserir dados na tabela de usuários (Senha criptografada: do batman = darkknight e pata os demais = wayne )
-INSERT INTO users (name, username, hashed_password, role) VALUES 
-('Bruce','batman', '$2b$12$C2opVxbWOLtC37BnXs610.xjn1Bls77Nv0MEAwmHF0FZFvZkpyeT2', 'Admin'), 
-('Alfred', 'alfred', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Gerente'),
-('João' ,'employee1', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Funcionário'),
-('Ana' ,'employe2', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Funcionário');
+INSERT INTO users (name, username, hashed_password, role, created_at, updated_at) VALUES 
+('Bruce','batman', '$2b$12$C2opVxbWOLtC37BnXs610.xjn1Bls77Nv0MEAwmHF0FZFvZkpyeT2', 'Admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+('Alfred', 'alfred', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Gerente', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('João' ,'employee1', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Funcionário', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Ana' ,'employe2', '$2b$12$zsTp008oPxkbNTuVq39WCu0.9Kq5PATGR6Q2lorXEoaXsmVWfz5xG', 'Funcionário', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 
 -- Inserir dados na tabela de recursos
-INSERT INTO resources (name, type, quantity, status, registered_by) VALUES 
-('Batmovel v2', 'Veiculo', 1, 'Disponível', 1),
-('Batarang', 'Acessório', 25, 'Disponível', 2),
-('Battraje v1', 'Traje', 3, 'Disponível', 2),
-('Batjato v1', 'Veiculo', 1, 'Disponível', 1),
-('Battraje v2', 'Traje', 4, 'Disponível', 2);
+INSERT INTO resources (name, type, quantity, registered_by, created_at, updated_at) VALUES 
+('Batmovel v2', 'Veículo', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Batarang', 'Acessório', 25, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Battraje v1', 'Traje', 3, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Batjato v1', 'Veículo', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Battraje v2', 'Traje', 4, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Inserir dados na tabela de crimes
 INSERT INTO crime_stats (villain, crimes, neighborhood, date) VALUES 
@@ -250,9 +250,9 @@ INSERT INTO alerts (location, villain, type) VALUES
 ('Arkham Asylum', 'Charada', 'Assassinato');
 
 -- Inserir dados na tabela de solicitações de recursos
-INSERT INTO requests (equipment_name, quantity, status, requested_by, status_changed_by) VALUES
-('Carro', 1, 'Concluído', 2, 3),
-('Boomerang', 25, 'Concluído', 2, 3),
-('Traje', 3, 'Concluído', 2, 2),
-('Jato', 1, 'Concluído', 1, 3),
-('Traje com Kevlar', 4, 'Concluído', 2, 3);
+INSERT INTO requests (equipment_name, quantity, status, requested_by, status_changed_by, resolved_at, created_at, updated_at) VALUES
+('Carro', 1, 'Concluído', 2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Boomerang', 25, 'Concluído', 2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Traje', 3, 'Concluído', 2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Jato', 1, 'Concluído', 1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Traje com Kevlar', 4, 'Concluído', 2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

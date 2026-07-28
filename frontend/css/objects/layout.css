@@ -1,0 +1,25 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem max(1rem, calc((100% - var(--content-width)) / 2));
+  background: rgb(9 11 16 / 88%);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 0.75rem; }
+.brand img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; }
+.brand h1 { font-size: clamp(1rem, 2vw, 1.25rem); }
+.main-content { width: min(calc(100% - 2rem), var(--content-width)); margin: 0 auto; padding: 2rem 0 3rem; }
+.page-heading { margin-bottom: 1.25rem; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.site-footer { padding: 1.25rem; color: var(--color-muted); text-align: center; border-top: 1px solid var(--color-border); }
+@media (max-width: 800px) {
+  .site-header { align-items: flex-start; flex-direction: column; }
+  .grid, .charts { grid-template-columns: 1fr; }
+}

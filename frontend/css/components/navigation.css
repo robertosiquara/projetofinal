@@ -1,0 +1,13 @@
+.nav-menu { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.nav-menu a, .nav-menu button {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.nav-menu a:hover, .nav-menu a[aria-current="page"], .nav-menu button:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}

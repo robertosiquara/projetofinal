@@ -1,0 +1,12 @@
+.message { min-height: 1.5rem; color: var(--color-muted); }
+.message--error { color: var(--color-danger); }
+.message--success { color: var(--color-success); }
+.badge { display: inline-flex; width: fit-content; padding: 0.25rem 0.55rem; border-radius: 999px; background: rgb(245 197 24 / 15%); color: var(--color-primary); font-size: 0.8rem; font-weight: 700; }
+.badge--success { background: rgb(56 193 114 / 15%); color: var(--color-success); }
+.badge--danger { background: rgb(239 83 80 / 15%); color: var(--color-danger); }
+.alert-box { border-color: var(--color-danger); }
+.toast-container { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; display: grid; gap: 0.6rem; }
+.toast { min-width: min(360px, calc(100vw - 2rem)); padding: 0.85rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-alt); box-shadow: var(--shadow-card); }
+.toast--error { border-color: var(--color-danger); }
+.toast--success { border-color: var(--color-success); }
+.empty-state { color: var(--color-muted); text-align: center; padding: 1rem; }

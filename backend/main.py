@@ -1,48 +1,55 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.database import Base, engine
-from backend.routers import request_resource, users, resources, requests, dashboard, alerts
-import os
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from backend.config import settings
+from backend.database import Base, engine, get_db
+from backend.routers import alerts, dashboard, requests, resources, users
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
 
 app = FastAPI(
-    title= 'Cadastro de tarefas',
-    version= '1.0.0',
-    description= 'API para gerenciamento de tarefas'
+    title=settings.app_name,
+    version="3.0.0",
+    description="API de gestão da Central de Segurança Wayne",
+    lifespan=lifespan,
 )
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000", "http://localhost:8000"],  
+    allow_origins=settings.origins,
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"],  
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
-if os.path.isdir("frontend"):
-    app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
-else:
-    print("[AVISO] Diretório 'frontend' não encontrado. Arquivos estáticos não foram montados.")
+app.include_router(users.router, prefix="/users", tags=["Usuários"])
+app.include_router(resources.router, prefix="/resources", tags=["Recursos"])
+app.include_router(requests.router, prefix="/requests", tags=["Solicitações"])
+app.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+app.include_router(alerts.router, prefix="/alerts", tags=["Alertas"])
+app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 
-app.include_router(users.router, prefix= '/users', tags=['Usuários'])
-app.include_router(resources.router, prefix= '/resources', tags=['Recursos'])
-app.include_router(requests.router, prefix= '/requests', tags=['Requisições'])
-app.include_router(request_resource.router, prefix='/request_resources', tags=['Requisitar'])
-app.include_router(dashboard.router, prefix= '/dashboard', tags=['Dashboard'])
-app.include_router(alerts.router, prefix= '/alerts', tags=['Alertas'])
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    return RedirectResponse("/frontend/index.html")
 
-Base.metadata.create_all(bind=engine)
 
-@app.get("/")
-async def root():
-    return RedirectResponse(url="/frontend/index.html")
-
-@app.get("/index")
-async def index():
-    return RedirectResponse(url="/frontend/index.html")
-
-@app.get("/index.html")
-async def index_html():
-    return RedirectResponse(url="/frontend/index.html")
+@app.get("/health", tags=["Sistema"])
+def health(db: Session = Depends(get_db)) -> dict[str, str]:
+    db.execute(text("SELECT 1"))
+    return {"status": "healthy", "database": "connected"}

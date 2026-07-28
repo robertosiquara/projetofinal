@@ -1,102 +1,87 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from typing import Optional # Importação não estritamente necessária aqui, mas boa prática
+from typing import Annotated
 
-# Importações dos módulos backend (ajuste os nomes se necessário)
-from backend import crud, models, schemas, database, auth
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from backend import auth, crud, schemas
+from backend.database import get_db
+from backend.models import User
+from backend.security import create_access_token
 
 router = APIRouter()
+DatabaseSession = Annotated[Session, Depends(get_db)]
+CurrentAdmin = Annotated[User, Depends(auth.get_current_admin)]
+CurrentUser = Annotated[User, Depends(auth.get_current_authenticated_user)]
 
-# --- Rotas de Autenticação ---
 
-@router.post('/token')
-def login_for_acess_token(
-    form_data: OAuth2PasswordRequestForm = Depends(), 
-    db: Session = Depends(database.get_db)
-):
-    user = crud.authenticate_user(db, form_data.username, form_data.password)
-    
-    if not user:
+@router.post("/token", response_model=schemas.Token)
+def login(
+    form: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: DatabaseSession,
+) -> schemas.Token:
+    user = crud.authenticate_user(db, form.username, form.password)
+    if user is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail='Login ou senha incorreto.',
-            headers={'WWW-Authenticate': 'Bearer'}
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuário ou senha inválidos.",
+            headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    access_token = crud.create_access_token(
-        data={'sub': user.username, "name": user.name, 'role': user.role}
-    )
-    
-    return {'access_token': access_token, 'token_type': 'bearer'}
+    return schemas.Token(access_token=create_access_token(str(user.id)))
 
 
+@router.get("/me", response_model=schemas.UserOut)
+def read_current_user(current_user: CurrentUser) -> User:
+    return current_user
 
-## 👥 Rotas de Usuário (CRUD)
 
-@router.post('/', response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
-def create_user_route(
-    user: schemas.UserCreate, 
-    db: Session = Depends(database.get_db), 
-    current_user: schemas.UserOut = Depends(auth.get_current_manager_or_admin)
-):
-    
-    db_user = crud.get_user(db, username=user.username)
-    
-    if db_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
-    return crud.create_user(db, user)
+@router.post("/", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
+def create_user(payload: schemas.UserCreate, db: DatabaseSession, _current: CurrentAdmin) -> User:
+    try:
+        return crud.create_user(db, payload)
+    except IntegrityError as exc:
+        raise HTTPException(status_code=409, detail="Nome de usuário já cadastrado.") from exc
 
-@router.get('/', response_model=list[schemas.UserOut])
+
+@router.get("/", response_model=list[schemas.UserOut])
 def read_users(
-    db: Session = Depends(database.get_db), 
-    current_user: schemas.UserOut = Depends(auth.get_current_manager_or_admin)
-):
-    stmt = select(models.User)
-    return db.scalars(stmt).all()
+    db: DatabaseSession,
+    _current: CurrentAdmin,
+    limit: int = Query(default=100, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> list[User]:
+    return crud.list_users(db, limit, offset)
 
-@router.put('/{user_id}', response_model=schemas.UserOut)
-def update_user_route(
-    user_id: int, 
-    user_update: schemas.UserOut, 
-    db: Session = Depends(database.get_db), 
-    current_user: schemas.UserOut = Depends(auth.get_current_manager_or_admin)
-):
-    db_user_check = db.scalars(select(models.User).where(models.User.id == user_id)).first()
-    if not db_user_check:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
 
-    updated_user = crud.update_user(
-        db, 
-        user_id=user_id, 
-        name=user_update.name,
-        username=user_update.username,
-        password=user_update.password,
-        role=user_update.role
-    )
+@router.patch("/{user_id}", response_model=schemas.UserOut)
+def update_user(
+    user_id: int,
+    payload: schemas.UserUpdate,
+    db: DatabaseSession,
+    current: CurrentAdmin,
+) -> User:
+    user = crud.get_user_by_id(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+    if user.id == current.id and payload.role is not None and payload.role != current.role:
+        raise HTTPException(status_code=400, detail="Você não pode alterar o próprio papel.")
+    try:
+        return crud.update_user(db, user, payload)
+    except IntegrityError as exc:
+        raise HTTPException(status_code=409, detail="Nome de usuário já cadastrado.") from exc
 
-    if not updated_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado durante a atualização.')
-        
-    return updated_user
 
-@router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_user_route(
-    user_id: int, 
-    db: Session = Depends(database.get_db), 
-    current_user: schemas.UserOut = Depends(auth.get_current_manager_or_admin)
-):
-    """
-    Deleta um usuário pelo ID. Requer permissão de Gerente ou Administrador.
-    Utiliza: crud.delete_user
-    """
-    # Chama a função delete_user do crud.py
-    deleted_user = crud.delete_user(db, user_id)
-    
-    if not deleted_user:
-        # Se a função retornar None, o usuário não foi encontrado
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado.')
-        
-    # Retorna 204 No Content (deleção bem-sucedida sem corpo de resposta)
-    return
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(
+    user_id: int,
+    db: DatabaseSession,
+    current: CurrentAdmin,
+) -> Response:
+    user = crud.get_user_by_id(db, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+    if user.id == current.id:
+        raise HTTPException(status_code=400, detail="Você não pode excluir o próprio usuário.")
+    crud.delete_user(db, user)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

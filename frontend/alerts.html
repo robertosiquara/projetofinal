@@ -1,40 +1,67 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Segurança Wayne</title>
-    <link rel="stylesheet" href="/frontend/css/style.css">
-    <link rel="icon" href="icone.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/frontend/icone.png">
+  <link rel="stylesheet" href="/frontend/css/main.css">
+  <title>Alertas | Wayne Security</title>
+</head>
 <body>
-    <header>
-        <div class="div-header">
-            <img src="/frontend/Wayne.webp" alt="Wayne-logo" class="logo">
-            <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
-        </div>
-        <nav>
-            <div id="nav-menu"></div>
-        </nav>
-    </header>
-    <main>
-        <div class="container">
-            <h2 class="h2-login">Alertas de Crimes</h2>
-            <div id="alert-container" class="alert-container">
-                <h3>Alerta</h3>
-                <p><strong>Local:</strong> <span id="alert-location"></span></p>
-                <p><strong>Vilão:</strong> <span id="alert-villain"></span></p>
-                <p><strong>Tipo:</strong> <span id="alert-type"></span></p>
-            </div>
-            <audio id="siren" src="/frontend/sounds/siren.mp3" preload="auto"></audio>
-        </div>
-    </main>
-    <footer>
-        <p>Wayne Enterprises ©</p>
-    </footer>
-    <script src="/frontend/js/script.js"></script>
-    <script>
-        renderMenu();
-        loadAlerts();
-    </script>
+  <header class="site-header">
+    <div class="brand">
+      <img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises">
+      <h1>Central de Segurança Wayne</h1>
+    </div>
+    <nav id="nav-menu" aria-label="Navegação principal"></nav>
+  </header>
+
+  <main class="main-content alerts-page">
+    <div class="page-heading alerts-heading">
+      <div>
+        <p class="eyebrow">Central de ocorrências</p>
+        <h2>Monitoramento de alertas</h2>
+        <p>Os alertas aparecem em tela cheia e depois são enviados ao histórico.</p>
+      </div>
+      <div class="monitor-controls">
+        <button id="start-monitoring" type="button" class="button button--danger">
+          Iniciar monitoramento
+        </button>
+        <button id="stop-monitoring" type="button" class="button" disabled>
+          Parar
+        </button>
+      </div>
+    </div>
+
+    <section class="card alert-history">
+      <div class="panel-heading">
+        <h3>Histórico de ocorrências</h3>
+        <span>Alertas já apresentados</span>
+      </div>
+      <div id="alert-list" class="alert-history-list" aria-live="polite">
+        <p class="empty-state">Inicie o monitoramento para receber alertas.</p>
+      </div>
+    </section>
+  </main>
+
+  <section id="live-alert" class="live-alert" role="alertdialog" aria-live="assertive" hidden>
+    <div class="live-alert__pulse" aria-hidden="true"></div>
+    <div class="live-alert__content">
+      <p class="live-alert__eyebrow">ALERTA CRÍTICO EM ANDAMENTO</p>
+      <div class="live-alert__icon" aria-hidden="true">!</div>
+      <h2 id="live-alert-type">Ocorrência detectada</h2>
+      <p class="live-alert__villain">Suspeito: <strong id="live-alert-villain"></strong></p>
+      <p class="live-alert__location">Local: <strong id="live-alert-location"></strong></p>
+      <p class="live-alert__instruction">Equipes próximas devem responder imediatamente.</p>
+      <span class="live-alert__timer">Movendo para o histórico em <strong id="live-alert-counter">6</strong>s</span>
+    </div>
+  </section>
+
+  <audio id="alert-audio" preload="auto" loop>
+    <source src="/frontend/sounds/siren.mp3" type="audio/mpeg">
+  </audio>
+
+  <footer class="site-footer">Wayne Enterprises © 2026</footer>
+  <script type="module" src="/frontend/js/pages/alerts.js"></script>
 </body>
 </html>

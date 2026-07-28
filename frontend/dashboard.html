@@ -1,71 +1,111 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Segurança Wayne</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="icon" href="icone.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/frontend/icone.png">
+  <link rel="stylesheet" href="/frontend/css/main.css">
+  <title>Dashboard | Wayne Security</title>
 </head>
 <body>
-    <header>
-        <div class="div-header">
-        <img src="Wayne.webp" alt="Wayne-logo" class="logo">
-        <h1 class="h1-header">Central de Segurança Indústrias Wayne</h1>
-        </div>
-        <div id="nav-menu"></div>
-    </header>
-    <main class="dashboard">
-    <div class="dashboard-container">
-        <div class="dash-title"><h2 class="h2-login">Crimes</h2></div>
-        
-        <div class="chart-box">
-            <h3 class="h3-dash">Crimes por ganges</h3>
-            <canvas id="crimesChart" width="400" height="400"></canvas>
-        </div>
-        <div class="chart-box">
-            <h3 class="h3-dash">Crimes por bairros</h3>
-            <canvas id="neighborhoodsChart" width="400" height="400"></canvas>
-        </div>
-        
+  <header class="site-header">
+    <div class="brand">
+      <img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises">
+      <h1>Central de Segurança Wayne</h1>
+    </div>
+    <nav id="nav-menu" aria-label="Navegação principal"></nav>
+  </header>
+
+  <main class="main-content dashboard-page">
+    <div class="page-heading dashboard-heading">
+      <div>
+        <p class="eyebrow">Monitoramento em tempo real</p>
+        <h2>Visão operacional</h2>
+        <p>Resumo de crimes, recursos e solicitações da central.</p>
+      </div>
+      <span class="live-indicator"><span></span>Sistema online</span>
     </div>
 
-    <div class="dashboard-container">
-        <div class="dash-title"><h2 class="h2-login">Recursos</h2></div>
-        
-        <div class="chart-box">
-            <h3 class="h3-dash">Tipos de Recursos</h3>
-            <canvas id="resourceTypeChart" width="400" height="200"></canvas>
-        </div>
-        <div class="chart-box">
-            <h3 class="h3-dash">Disponibilidade</h3>
-            <canvas id="resourceStatusChart" width="400" height="200"></canvas>
-        </div>
-        
-    </div>
+    <section id="dashboard-loading" class="dashboard-loading" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p>Carregando informações operacionais...</p>
+    </section>
 
-    <div class="dashboard-container">
-        <div class="dash-title"><h2 class="h2-login">Atividades dos Usuários</h2></div>
-        
-        <div class="chart-box">
-            <h3 class="h3-dash">Recursos Registrados por pessoa</h3>
-            <canvas id="registeredByChart" width="400" height="200"></canvas>
-        </div>
-        <div class="chart-box">
-            <h3 class="h3-dash">Conclusão das solicitações por pessoa</h3>
-            <canvas id="requestedByChart" width="400" height="400"></canvas>
-        </div>
-        
+    <section id="dashboard-error" class="card dashboard-error" hidden>
+      <h3>Não foi possível carregar o dashboard</h3>
+      <p>Confira se o servidor está funcionando e se seu usuário possui permissão.</p>
+      <button type="button" class="button" onclick="location.reload()">Tentar novamente</button>
+    </section>
+
+    <div id="dashboard-content" hidden>
+      <section class="summary-grid" aria-label="Resumo operacional">
+        <article class="summary-card">
+          <span class="summary-card__label">Ocorrências</span>
+          <strong id="total-crimes">0</strong>
+          <small>registros monitorados</small>
+        </article>
+        <article class="summary-card">
+          <span class="summary-card__label">Recursos</span>
+          <strong id="total-resources">0</strong>
+          <small>itens cadastrados</small>
+        </article>
+        <article class="summary-card summary-card--success">
+          <span class="summary-card__label">Disponíveis</span>
+          <strong id="available-resources">0</strong>
+          <small>recursos operacionais</small>
+        </article>
+        <article class="summary-card summary-card--warning">
+          <span class="summary-card__label">Pendentes</span>
+          <strong id="pending-requests">0</strong>
+          <small>solicitações aguardando</small>
+        </article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="card dashboard-panel dashboard-panel--wide">
+          <div class="panel-heading">
+            <h3>Crimes por vilão</h3>
+            <span>Volume de ocorrências</span>
+          </div>
+          <div id="crimes-by-villain" class="metric-list"></div>
+        </article>
+
+        <article class="card dashboard-panel">
+          <div class="panel-heading">
+            <h3>Crimes por bairro</h3>
+            <span>Áreas mais afetadas</span>
+          </div>
+          <div id="crimes-by-neighborhood" class="metric-list"></div>
+        </article>
+
+        <article class="card dashboard-panel">
+          <div class="panel-heading">
+            <h3>Recursos por tipo</h3>
+            <span>Distribuição do arsenal</span>
+          </div>
+          <div id="resources-by-type" class="metric-list"></div>
+        </article>
+
+        <article class="card dashboard-panel">
+          <div class="panel-heading">
+            <h3>Disponibilidade</h3>
+            <span>Situação dos recursos</span>
+          </div>
+          <div id="resources-by-status" class="metric-list"></div>
+        </article>
+
+        <article class="card dashboard-panel">
+          <div class="panel-heading">
+            <h3>Solicitações</h3>
+            <span>Andamento dos pedidos</span>
+          </div>
+          <div id="requests-by-status" class="metric-list"></div>
+        </article>
+      </section>
     </div>
-    </main>
-    <footer>
-        <p>Wayne Enterprises ©</p>
-    </footer>
-    <script src="js/script.js"></script>
-    <script>
-        renderMenu();
-        fetchStatsAndRenderCharts();
-    </script>
+  </main>
+
+  <footer class="site-footer">Wayne Enterprises © 2026</footer>
+  <script type="module" src="/frontend/js/pages/dashboard.js"></script>
 </body>
 </html>

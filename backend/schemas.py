@@ -1,143 +1,122 @@
-from pydantic import BaseModel, Field
-from backend.models import RoleEnum, TypeEnum
-from datetime import date
-from typing import Optional
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from backend.models import RequestStatusEnum, RoleEnum, TypeEnum
 
 
-#Validação User
-class UserBase(BaseModel):
-    name: str = Field(..., min_length=3, max_length=100)
-    username: str = Field(..., min_length=3, max_length=50)
+class ORMModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+
+
+class TextValidationMixin:
+    @field_validator("name", "username", "equipment_name", mode="before", check_fields=False)
+    @classmethod
+    def normalize_text(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = value.strip()
+        if value == "":
+            raise ValueError("O campo não pode ficar vazio.")
+        return value
+
+
+class UserBase(TextValidationMixin, ORMModel):
+    name: str = Field(min_length=3, max_length=100)
+    username: str = Field(min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_.-]+$")
     role: RoleEnum
-    model_config = {
-        "use_enum_values": True
-    }
+
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=6)
+    password: str = Field(min_length=8, max_length=72)
+
+
+class UserUpdate(TextValidationMixin, ORMModel):
+    name: str | None = Field(default=None, min_length=3, max_length=100)
+    username: str | None = Field(default=None, min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_.-]+$")
+    password: str | None = Field(default=None, min_length=8, max_length=72)
+    role: RoleEnum | None = None
+
 
 class UserOut(UserBase):
     id: int
+    created_at: datetime
+    updated_at: datetime
 
-    model_config = {
-        "from_attributes": True,
-        "use_enum_values": True # Repetido para garantir consistência
-    }
 
-#Validação Resource
-class ResourceBase(BaseModel):
-    name: str
+class ResourceBase(TextValidationMixin, ORMModel):
+    name: str = Field(min_length=2, max_length=100)
     type: TypeEnum
-    quantity: int
-    status: Optional[str] = None
+    quantity: int = Field(ge=0, le=1_000_000)
 
-    model_config = {
-        "use_enum_values": True
-    }
-        
+
 class ResourceCreate(ResourceBase):
     pass
 
-class ResourceOut(BaseModel):
+
+class ResourceUpdate(TextValidationMixin, ORMModel):
+    name: str | None = Field(default=None, min_length=2, max_length=100)
+    type: TypeEnum | None = None
+    quantity: int | None = Field(default=None, ge=0, le=1_000_000)
+
+
+class ResourceOut(ResourceBase):
     id: int
-    name: str
-    type: str
-    quantity: int
     status: str
     registered_by: int
-    registered_by_name: str  
-    
-    model_config = {
-        "from_attributes": True
-    }
+    registered_by_name: str | None = None
+    created_at: datetime
+    updated_at: datetime
 
 
-class ResourceSchema(ResourceBase):
-    id: int
+class RequestCreate(TextValidationMixin, ORMModel):
+    equipment_name: str = Field(min_length=2, max_length=100)
+    quantity: int = Field(default=1, ge=1, le=100_000)
 
 
-    model_config = {
-        "from_attributes": True,
-        "use_enum_values": True
-    }
+class RequestQuantityUpdate(ORMModel):
+    quantity: int = Field(ge=1, le=100_000)
 
-class ResourceUpdate(BaseModel):
-    name: Optional[str] = None
-    type: Optional[TypeEnum] = None
-    quantity: Optional[int] = None  
-    status: Optional[str] = None
 
-    model_config = {
-        "use_enum_values": True
-    }
+class RequestStatusUpdate(ORMModel):
+    status: RequestStatusEnum
 
-#Validação Request
-class RequestBase(BaseModel):
-    equipment_name: str
-    status: Optional[str] = "Pendente"
+    @field_validator("status")
+    @classmethod
+    def reject_pending_status(cls, value: RequestStatusEnum) -> RequestStatusEnum:
+        if value == RequestStatusEnum.PENDING:
+            raise ValueError("Use apenas Concluído ou Recusado.")
+        return value
 
-class RequestCreate(RequestBase):
-    quantity: Optional[int] = None 
 
-class RequestUpdate(BaseModel):
-    quantity: Optional[int] = None
-    status: Optional[str] = 'Concluído'
-
-class RequestSchema(RequestBase):
-    id: int
-    requested_by: int
-    status_changed_by: Optional[int] = None
-    quantity: Optional[int] = None
-    
-    model_config = {
-        "from_attributes": True
-    }
-
-class RequestOut(RequestBase):
+class RequestOut(ORMModel):
     id: int
     equipment_name: str
-    quantity: Optional[int] = None
-    status: str
+    quantity: int
+    status: RequestStatusEnum
     requested_by: int
-    requested_by_name: str  
-    status_changed_by: Optional[int] = None
-    status_changed_by_name: Optional[str] = None  
-    
-    model_config = {
-        "from_attributes": True
-    }
+    requested_by_name: str | None = None
+    status_changed_by: int | None = None
+    status_changed_by_name: str | None = None
+    created_at: datetime
+    updated_at: datetime
+    resolved_at: datetime | None = None
 
 
-#Validação Crime
-class CrimeStatBase(BaseModel):
+class CrimeStatOut(ORMModel):
+    id: int
     villain: str
     crimes: str
     neighborhood: str
-    date: date
+    date: datetime
 
-class CrimeStat(CrimeStatBase):
+
+class AlertOut(ORMModel):
     id: int
-
-    model_config = {
-        "from_attributes": True
-    }
-
-
-#Validação Alert
-class AlertBase(BaseModel):
     location: str
     villain: str
     type: str
 
-class AlertSchema(AlertBase):
-    id: int
 
-    model_config = {
-        "from_attributes": True
-    }
-
-
-#Validação Token
 class Token(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = "bearer"

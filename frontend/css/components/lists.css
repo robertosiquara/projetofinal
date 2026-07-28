@@ -1,0 +1,15 @@
+.list { display: grid; gap: 0.75rem; }
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.list-item__content { display: grid; gap: 0.2rem; min-width: 0; }
+.list-item__meta { color: var(--color-muted); font-size: 0.9rem; }
+.list-item__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+@media (max-width: 600px) { .list-item { align-items: stretch; flex-direction: column; } }

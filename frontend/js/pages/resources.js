@@ -1,0 +1,9 @@
+import { initializeProtectedPage } from "../app.js";
+import { resourceService } from "../services/resource-service.js";
+import { showToast } from "../components/toast.js";
+const user = await initializeProtectedPage(); const form = document.querySelector("#resource-form"); const list = document.querySelector("#resources-list");
+function render(items) { list.replaceChildren(...items.map((item) => { const li=document.createElement("li"); li.className="list-item"; const c=document.createElement("div"); c.className="list-item__content"; const n=document.createElement("strong"); n.textContent=item.name; const m=document.createElement("span"); m.className="list-item__meta"; m.textContent=`${item.type} • ${item.quantity} • ${item.status}`; const a=document.createElement("div"); a.className="list-item__actions"; const b=document.createElement("button"); b.className="button button--danger button--small"; b.textContent="Excluir"; b.dataset.resourceId=item.id; c.append(n,m); a.append(b); li.append(c,a); return li; })); }
+async function load(){ try { render(await resourceService.list()); } catch(error){ showToast(error.message,"error"); } }
+form?.addEventListener("submit", async(event)=>{ event.preventDefault(); const raw=Object.fromEntries(new FormData(form)); raw.quantity=Number(raw.quantity); try{ await resourceService.create(raw); form.reset(); showToast("Recurso cadastrado.","success"); await load(); }catch(error){ showToast(error.message,"error"); }});
+list?.addEventListener("click", async(event)=>{ const button=event.target.closest("[data-resource-id]"); if(!button||!confirm("Excluir este recurso?")) return; try{ await resourceService.remove(button.dataset.resourceId); showToast("Recurso excluído.","success"); await load(); }catch(error){ showToast(error.message,"error"); }});
+if(user) load();

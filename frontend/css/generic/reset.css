@@ -1,0 +1,6 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { color-scheme: dark; scroll-behavior: smooth; }
+body, h1, h2, h3, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+img, canvas { display: block; max-width: 100%; }
+button, input, select { font: inherit; }

@@ -1,0 +1,19 @@
+:root {
+  --color-bg: #090b10;
+  --color-surface: #121722;
+  --color-surface-alt: #1a2130;
+  --color-border: #2a3448;
+  --color-text: #f5f7fa;
+  --color-muted: #a6b0c3;
+  --color-primary: #f5c518;
+  --color-primary-hover: #ffd84a;
+  --color-success: #38c172;
+  --color-danger: #ef5350;
+  --color-warning: #ffb020;
+  --shadow-card: 0 18px 50px rgb(0 0 0 / 28%);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.85rem;
+  --radius-lg: 1.2rem;
+  --content-width: 1200px;
+  --transition-fast: 160ms ease;
+}
