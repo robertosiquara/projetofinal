@@ -1,1 +1,48 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/frontend/icone.png"><link rel="stylesheet" href="/frontend/css/main.css"><title>Solicitar recurso | Wayne Security</title></head><body><header class="site-header"><div class="brand"><img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises"><h1>Central de Segurança Wayne</h1></div><nav id="nav-menu" aria-label="Navegação principal"></nav></header><main class="main-content"><div class="page-heading"><h2>Solicitar recurso</h2></div><div class="grid"><section class="card"><h3>Nova solicitação</h3><form id="request-form" class="form"><div class="field"><label for="equipment_name">Equipamento</label><input id="equipment_name" name="equipment_name" required></div><div class="field"><label for="quantity">Quantidade</label><input id="quantity" name="quantity" type="number" min="1" value="1" required></div><button class="button button--primary">Solicitar</button></form></section><section class="card"><h3>Minhas solicitações</h3><ul id="own-requests-list" class="list"></ul></section></div></main><footer class="site-footer">Wayne Enterprises © 2026</footer><script type="module" src="/frontend/js/pages/request-create.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/frontend/icone.png">
+  <link rel="stylesheet" href="/frontend/css/main.css">
+  <title>Solicitar recurso | Wayne Security</title>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises">
+      <h1>Central de Segurança Wayne</h1>
+    </div>
+    <nav id="nav-menu" aria-label="Navegação principal"></nav>
+  </header>
+
+  <main class="main-content">
+    <div class="page-heading">
+      <h2>Solicitar recurso</h2>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <h3>Nova solicitação</h3>
+        <form id="request-form" class="form">
+          <div class="field">
+            <label for="equipment_name">Equipamento</label>
+            <input id="equipment_name" name="equipment_name" required>
+          </div>
+          <div class="field">
+            <label for="quantity">Quantidade</label>
+            <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+          </div>
+          <button class="button button--primary">Solicitar</button>
+        </form>
+      </section>
+      <section class="card">
+        <h3>Minhas solicitações</h3>
+        <ul id="own-requests-list" class="list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">Wayne Enterprises © 2026</footer>
+  <script type="module" src="/frontend/js/pages/request-create.js"></script>
+</body>
+</html>

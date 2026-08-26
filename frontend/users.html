@@ -1,1 +1,61 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/frontend/icone.png"><link rel="stylesheet" href="/frontend/css/main.css"><title>Usuários | Wayne Security</title></head><body><header class="site-header"><div class="brand"><img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises"><h1>Central de Segurança Wayne</h1></div><nav id="nav-menu" aria-label="Navegação principal"></nav></header><main class="main-content"><div class="page-heading"><h2>Gestão de usuários</h2></div><div class="grid"><section class="card"><h3>Novo usuário</h3><form id="user-form" class="form"><div class="field"><label for="name">Nome</label><input id="name" name="name" required minlength="3"></div><div class="field"><label for="username">Usuário</label><input id="username" name="username" required minlength="3"></div><div class="field"><label for="password">Senha</label><input id="password" name="password" type="password" required minlength="8"></div><div class="field"><label for="role">Papel</label><select id="role" name="role" required><option value="">Selecione</option><option>Admin</option><option>Gerente</option><option>Funcionário</option></select></div><button class="button button--primary">Cadastrar</button></form></section><section class="card"><h3>Usuários</h3><ul id="users-list" class="list"></ul></section></div></main><footer class="site-footer">Wayne Enterprises © 2026</footer><script type="module" src="/frontend/js/pages/users.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/frontend/icone.png">
+  <link rel="stylesheet" href="/frontend/css/main.css">
+  <title>Usuários | Wayne Security</title>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises">
+      <h1>Central de Segurança Wayne</h1>
+    </div>
+    <nav id="nav-menu" aria-label="Navegação principal"></nav>
+  </header>
+
+  <main class="main-content">
+    <div class="page-heading">
+      <h2>Gestão de usuários</h2>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <h3>Novo usuário</h3>
+        <form id="user-form" class="form">
+          <div class="field">
+            <label for="name">Nome</label>
+            <input id="name" name="name" required minlength="3">
+          </div>
+          <div class="field">
+            <label for="username">Usuário</label>
+            <input id="username" name="username" required minlength="3">
+          </div>
+          <div class="field">
+            <label for="password">Senha</label>
+            <input id="password" name="password" type="password" required minlength="8">
+          </div>
+          <div class="field">
+            <label for="role">Papel</label>
+            <select id="role" name="role" required>
+              <option value="">Selecione</option>
+              <option>Admin</option>
+              <option>Gerente</option>
+              <option>Funcionário</option>
+            </select>
+          </div>
+          <button class="button button--primary">Cadastrar</button>
+        </form>
+      </section>
+      <section class="card">
+        <h3>Usuários</h3>
+        <ul id="users-list" class="list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">Wayne Enterprises © 2026</footer>
+  <script type="module" src="/frontend/js/pages/users.js"></script>
+</body>
+</html>

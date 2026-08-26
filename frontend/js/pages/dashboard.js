@@ -24,7 +24,10 @@ function renderBars(containerSelector, data) {
   if (!container) return;
 
   container.replaceChildren();
-  const entries = Object.entries(data);
+  const entries = Object.entries(data).sort(
+    ([labelA, valueA], [labelB, valueB]) =>
+      valueB - valueA || labelA.localeCompare(labelB, "pt-BR"),
+  );
 
   if (entries.length === 0) {
     const empty = document.createElement("p");

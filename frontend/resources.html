@@ -1,1 +1,58 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/frontend/icone.png"><link rel="stylesheet" href="/frontend/css/main.css"><title>Recursos | Wayne Security</title></head><body><header class="site-header"><div class="brand"><img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises"><h1>Central de Segurança Wayne</h1></div><nav id="nav-menu" aria-label="Navegação principal"></nav></header><main class="main-content"><div class="page-heading"><h2>Inventário</h2></div><div class="grid"><section class="card"><h3>Novo recurso</h3><form id="resource-form" class="form"><div class="field"><label for="name">Nome</label><input id="name" name="name" required></div><div class="field"><label for="type">Tipo</label><select id="type" name="type" required><option value="">Selecione</option><option>Veículo</option><option>Acessório</option><option>Arma</option><option>Traje</option></select></div><div class="field"><label for="quantity">Quantidade</label><input id="quantity" name="quantity" type="number" min="0" required></div><button class="button button--primary">Cadastrar</button></form></section><section class="card"><h3>Recursos</h3><ul id="resources-list" class="list"></ul></section></div></main><footer class="site-footer">Wayne Enterprises © 2026</footer><script type="module" src="/frontend/js/pages/resources.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/frontend/icone.png">
+  <link rel="stylesheet" href="/frontend/css/main.css">
+  <title>Recursos | Wayne Security</title>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <img src="/frontend/Wayne.webp" alt="Logotipo da Wayne Enterprises">
+      <h1>Central de Segurança Wayne</h1>
+    </div>
+    <nav id="nav-menu" aria-label="Navegação principal"></nav>
+  </header>
+
+  <main class="main-content">
+    <div class="page-heading">
+      <h2>Inventário</h2>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <h3>Novo recurso</h3>
+        <form id="resource-form" class="form">
+          <div class="field">
+            <label for="name">Nome</label>
+            <input id="name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="type">Tipo</label>
+            <select id="type" name="type" required>
+              <option value="">Selecione</option>
+              <option>Veículo</option>
+              <option>Acessório</option>
+              <option>Arma</option>
+              <option>Traje</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="quantity">Quantidade</label>
+            <input id="quantity" name="quantity" type="number" min="0" required>
+          </div>
+          <button class="button button--primary">Cadastrar</button>
+        </form>
+      </section>
+      <section class="card">
+        <h3>Recursos</h3>
+        <ul id="resources-list" class="list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">Wayne Enterprises © 2026</footer>
+  <script type="module" src="/frontend/js/pages/resources.js"></script>
+</body>
+</html>
